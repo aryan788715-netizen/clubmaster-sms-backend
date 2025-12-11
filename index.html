@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClubMaster SMS Backend Setup Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 42px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 40px 0 20px;
+            color: #1e293b;
+        }
+        h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 30px 0 15px;
+            color: #475569;
+        }
+        p {
+            color: #64748b;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .step {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+        .step-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: 800;
+            margin-right: 12px;
+        }
+        code {
+            background: #1e293b;
+            color: #10b981;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .warning {
+            background: #fef3c7;
+            border-left: 5px solid #f59e0b;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d1fae5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #dbeafe;
+            border-left: 5px solid #3b82f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 10px;
+            color: #475569;
+        }
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            font-weight: 700;
+            margin: 10px 10px 10px 0;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 ClubMaster SMS Backend Setup</h1>
+        <p style="font-size: 18px; margin-bottom: 30px;">Complete guide to set up real SMS OTP using Supabase + MSG91</p>
+
+        <div class="info">
+            <strong>🎯 What You'll Get:</strong>
+            <ul style="margin-top: 10px;">
+                <li>✅ Real SMS OTP delivery to Indian phone numbers</li>
+                <li>✅ Secure backend API with Supabase Edge Functions</li>
+                <li>✅ Free tier: 100 SMS/day on MSG91</li>
+                <li>✅ Cost: ~₹0.20 per SMS after free tier</li>
+            </ul>
+        </div>
+
+        <h2>📋 Prerequisites</h2>
+        <div class="step">
+            <p><strong>You'll need:</strong></p>
+            <ul>
+                <li>Supabase account (free)</li>
+                <li>MSG91 account (free tier available)</li>
+                <li>Node.js installed (for deployment)</li>
+                <li>Supabase CLI installed</li>
+            </ul>
+        </div>
+
+        <h2>🚀 Step-by-Step Setup</h2>
+
+        <div class="step">
+            <h3><span class="step-number">1</span>Create MSG91 Account</h3>
+            <ol>
+                <li>Go to <a href="https://msg91.com/signup" target="_blank">https://msg91.com/signup</a></li>
+                <li>Sign up with your email</li>
+                <li>Verify your email and phone number</li>
+                <li>Get <strong>100 FREE SMS credits</strong> for testing</li>
+                <li>Go to <strong>Dashboard → API</strong></li>
+                <li>Copy your <code>Auth Key</code></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">2</span>Create Supabase Project</h3>
+            <ol>
+                <li>Go to <a href="https://supabase.com" target="_blank">https://supabase.com</a></li>
+                <li>Click <strong>"Start your project"</strong></li>
+                <li>Create a new organization (if needed)</li>
+                <li>Create a new project:
+                    <ul>
+                        <li>Name: <code>clubmaster-sms</code></li>
+                        <li>Database Password: (create a strong password)</li>
+                        <li>Region: Choose closest to India</li>
+                    </ul>
+                </li>
+                <li>Wait for project to be ready (~2 minutes)</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">3</span>Install Supabase CLI</h3>
+            <p>Open terminal and run:</p>
+            <pre>npm install -g supabase</pre>
+            <p>Or using Homebrew (Mac):</p>
+            <pre>brew install supabase/tap/supabase</pre>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">4</span>Initialize Supabase Project</h3>
+            <p>Create a new folder and initialize:</p>
+            <pre>mkdir clubmaster-sms-backend
+cd clubmaster-sms-backend
+supabase init</pre>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">5</span>Create Edge Function</h3>
+            <p>Create the SMS OTP function:</p>
+            <pre>supabase functions new send-otp</pre>
+            
+            <p>This creates: <code>supabase/functions/send-otp/index.ts</code></p>
+            
+            <p>Replace the content with:</p>
+            <pre>import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+
+const MSG91_AUTH_KEY = Deno.env.get('MSG91_AUTH_KEY')!
+const MSG91_TEMPLATE_ID = Deno.env.get('MSG91_TEMPLATE_ID') || 'default'
+
+serve(async (req) => {
+  // Handle CORS
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+      }
+    })
+  }
+
+  try {
+    const { phone, otp } = await req.json()
+
+    if (!phone || !otp) {
+      throw new Error('Phone and OTP are required')
+    }
+
+    // Send SMS via MSG91
+    const msg91Response = await fetch('https://api.msg91.com/api/v5/otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authkey': MSG91_AUTH_KEY
+      },
+      body: JSON.stringify({
+        template_id: MSG91_TEMPLATE_ID,
+        mobile: phone.replace('+', ''),
+        otp: otp,
+        otp_expiry: 5 // 5 minutes
+      })
+    })
+
+    const result = await msg91Response.json()
+
+    if (result.type === 'success') {
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'OTP sent successfully',
+          phone: phone 
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+          status: 200
+        }
+      )
+    } else {
+      throw new Error(result.message || 'Failed to send SMS')
+    }
+
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message 
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        status: 400
+      }
+    )
+  }
+})</pre>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">6</span>Set Environment Variables</h3>
+            <p>Create <code>.env</code> file in your project root:</p>
+            <pre>MSG91_AUTH_KEY=your_msg91_auth_key_here
+MSG91_TEMPLATE_ID=your_template_id_here</pre>
+            
+            <p>Set secrets in Supabase:</p>
+            <pre>supabase secrets set MSG91_AUTH_KEY=your_auth_key_here
+supabase secrets set MSG91_TEMPLATE_ID=your_template_id_here</pre>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">7</span>Deploy Edge Function</h3>
+            <p>Link to your Supabase project:</p>
+            <pre>supabase link --project-ref your-project-ref</pre>
+            
+            <p>Deploy the function:</p>
+            <pre>supabase functions deploy send-otp</pre>
+            
+            <div class="success" style="margin-top: 15px;">
+                <strong>✅ Success!</strong> Your function is now deployed at:<br>
+                <code>https://your-project-ref.supabase.co/functions/v1/send-otp</code>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">8</span>Update Frontend Code</h3>
+            <p>In your ClubMaster user portal, update the SMS configuration:</p>
+            <pre>const SMS_CONFIG = {
+    endpoint: 'https://YOUR-PROJECT-REF.supabase.co/functions/v1/send-otp',
+    provider: 'msg91',
+    apiKey: 'YOUR-SUPABASE-ANON-KEY'
+};</pre>
+            
+            <p>Get your Supabase URL and Anon Key from:</p>
+            <p><strong>Supabase Dashboard → Settings → API</strong></p>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">9</span>Create MSG91 OTP Template</h3>
+            <ol>
+                <li>Go to MSG91 Dashboard → <strong>OTP</strong></li>
+                <li>Click <strong>"Create Template"</strong></li>
+                <li>Template content:
+                    <pre>Your ClubMaster Pro OTP is ##OTP##. Valid for 5 minutes. Do not share with anyone.</pre>
+                </li>
+                <li>Submit for approval (usually approved in 1-2 hours)</li>
+                <li>Copy the <strong>Template ID</strong></li>
+                <li>Update your environment variable with this Template ID</li>
+            </ol>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Important Notes:</strong>
+            <ul style="margin-top: 10px;">
+                <li>MSG91 requires DLT registration for commercial use in India</li>
+                <li>For testing, use the free credits (100 SMS)</li>
+                <li>Template approval takes 1-2 hours</li>
+                <li>Keep your Auth Key secret - never expose in frontend</li>
+            </ul>
+        </div>
+
+        <h2>🧪 Testing</h2>
+        <div class="step">
+            <h3>Test the API</h3>
+            <p>Use curl to test:</p>
+            <pre>curl -X POST https://YOUR-PROJECT-REF.supabase.co/functions/v1/send-otp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR-SUPABASE-ANON-KEY" \
+  -d '{
+    "phone": "+919876543210",
+    "otp": "123456"
+  }'</pre>
+            
+            <p>Expected response:</p>
+            <pre>{
+  "success": true,
+  "message": "OTP sent successfully",
+  "phone": "+919876543210"
+}</pre>
+        </div>
+
+        <h2>💰 Pricing</h2>
+        <div class="info">
+            <strong>MSG91 Pricing (India):</strong>
+            <ul style="margin-top: 10px;">
+                <li><strong>Free Tier:</strong> 100 SMS/day</li>
+                <li><strong>Transactional SMS:</strong> ₹0.20 per SMS</li>
+                <li><strong>OTP SMS:</strong> ₹0.18 per SMS</li>
+                <li><strong>Promotional SMS:</strong> ₹0.15 per SMS</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>Supabase:</strong> Free tier includes 500K Edge Function invocations/month</p>
+        </div>
+
+        <h2>🔒 Security Best Practices</h2>
+        <div class="step">
+            <ul>
+                <li>✅ Never expose MSG91 Auth Key in frontend</li>
+                <li>✅ Use Supabase Edge Functions as middleware</li>
+                <li>✅ Implement rate limiting (max 3 OTP per phone/hour)</li>
+                <li>✅ Set OTP expiry to 5 minutes</li>
+                <li>✅ Use HTTPS only</li>
+                <li>✅ Validate phone numbers before sending</li>
+            </ul>
+        </div>
+
+        <h2>📞 Support</h2>
+        <div class="step">
+            <p><strong>MSG91 Support:</strong></p>
+            <ul>
+                <li>Email: support@msg91.com</li>
+                <li>Docs: <a href="https://docs.msg91.com" target="_blank">https://docs.msg91.com</a></li>
+            </ul>
+            
+            <p><strong>Supabase Support:</strong></p>
+            <ul>
+                <li>Discord: <a href="https://discord.supabase.com" target="_blank">https://discord.supabase.com</a></li>
+                <li>Docs: <a href="https://supabase.com/docs" target="_blank">https://supabase.com/docs</a></li>
+            </ul>
+        </div>
+
+        <div class="success">
+            <h3>🎉 You're All Set!</h3>
+            <p>Your ClubMaster Pro now has real SMS OTP authentication!</p>
+            <p style="margin-top: 10px;">Users will receive OTP on their phone numbers for secure login and signup.</p>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <a href="https://msg91.com/signup" class="btn" target="_blank">Sign Up for MSG91</a>
+            <a href="https://supabase.com" class="btn" target="_blank">Create Supabase Project</a>
+        </div>
+    </div>
+</body>
+</html>
